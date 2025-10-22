@@ -1,0 +1,272 @@
+esphome:
+  name: multi-ir-remote
+  friendly_name: Multi IR Remote
+  platform: ESP32
+  board: esp32dev
+
+wifi:
+  ssid: "NOM_DE_LA_TEVA_XARXA"
+  password: "CONTRASENYA_WIFI"
+  ap:
+    ssid: "Multi-IR-Remote"
+    password: "12345678"
+
+logger:
+
+api:
+
+ota:
+
+# ------------------------------
+# Transmissors IR individuals
+# ------------------------------
+remote_transmitter:
+  - id: ir1
+    pin: GPIO23
+    carrier_duty_percent: 50%
+  - id: ir2
+    pin: GPIO22
+    carrier_duty_percent: 50%
+  - id: ir3
+    pin: GPIO21
+    carrier_duty_percent: 50%
+  - id: ir4
+    pin: GPIO19
+    carrier_duty_percent: 50%
+  - id: ir5
+    pin: GPIO18
+    carrier_duty_percent: 50%
+  - id: ir6
+    pin: GPIO5
+    carrier_duty_percent: 50%
+
+# ------------------------------
+# Variable global per sortida activa
+# ------------------------------
+globals:
+  - id: selected_output
+    type: int
+    restore_value: no
+    initial_value: '1'
+
+# ------------------------------
+# Funció per enviar a la sortida seleccionada
+# ------------------------------
+script:
+  - id: send_sony_ir
+    parameters:
+      command: int
+    then:
+      - if:
+          condition:
+            lambda: 'return id(selected_output) == 1;'
+          then:
+            - remote_transmitter.transmit_sony:
+                id: ir1
+                data: !lambda 'return command;'
+                nbits: 12
+                address: 1
+      - if:
+          condition:
+            lambda: 'return id(selected_output) == 2;'
+          then:
+            - remote_transmitter.transmit_sony:
+                id: ir2
+                data: !lambda 'return command;'
+                nbits: 12
+                address: 1
+      - if:
+          condition:
+            lambda: 'return id(selected_output) == 3;'
+          then:
+            - remote_transmitter.transmit_sony:
+                id: ir3
+                data: !lambda 'return command;'
+                nbits: 12
+                address: 1
+      - if:
+          condition:
+            lambda: 'return id(selected_output) == 4;'
+          then:
+            - remote_transmitter.transmit_sony:
+                id: ir4
+                data: !lambda 'return command;'
+                nbits: 12
+                address: 1
+      - if:
+          condition:
+            lambda: 'return id(selected_output) == 5;'
+          then:
+            - remote_transmitter.transmit_sony:
+                id: ir5
+                data: !lambda 'return command;'
+                nbits: 12
+                address: 1
+      - if:
+          condition:
+            lambda: 'return id(selected_output) == 6;'
+          then:
+            - remote_transmitter.transmit_sony:
+                id: ir6
+                data: !lambda 'return command;'
+                nbits: 12
+                address: 1
+
+# ------------------------------
+# Botons per enviar comandes IR
+# ------------------------------
+button:
+  - platform: template
+    name: "Power"
+    on_press:
+      - script.execute:
+          id: send_sony_ir
+          command: 21
+
+  - platform: template
+    name: "Vol+"
+    on_press:
+      - script.execute:
+          id: send_sony_ir
+          command: 18
+
+  - platform: template
+    name: "Vol-"
+    on_press:
+      - script.execute:
+          id: send_sony_ir
+          command: 19
+
+  - platform: template
+    name: "Canal+"
+    on_press:
+      - script.execute:
+          id: send_sony_ir
+          command: 16
+
+  - platform: template
+    name: "Canal-"
+    on_press:
+      - script.execute:
+          id: send_sony_ir
+          command: 17
+
+  # Botons 0–9
+  {% for i in range(0,10) %}
+  - platform: template
+    name: "Num {{ i }}"
+    on_press:
+      - script.execute:
+          id: send_sony_ir
+          command: {{ i }}
+  {% endfor %}
+
+# ------------------------------
+# Web Server amb selector i botons
+# ------------------------------
+web_server:
+  port: 80
+  include_internal: true
+  local: true
+  css: |-
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #202020;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    h2 {
+      margin-bottom: 10px;
+    }
+    .selector {
+      margin-bottom: 15px;
+    }
+    .selector button {
+      background-color: #333;
+      border: none;
+      color: white;
+      padding: 10px 15px;
+      margin: 4px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .selector button.active {
+      background-color: #2196F3;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      max-width: 300px;
+      margin: 0 auto;
+    }
+    button.command {
+      background-color: #444;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 15px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    button.command:hover {
+      background-color: #666;
+    }
+  html: |-
+    <h2>🎛️ Multi IR Remote</h2>
+    <div class="selector">
+      <button id="b1" onclick="selectTV(1)">TV1</button>
+      <button id="b2" onclick="selectTV(2)">TV2</button>
+      <button id="b3" onclick="selectTV(3)">TV3</button>
+      <button id="b4" onclick="selectTV(4)">TV4</button>
+      <button id="b5" onclick="selectTV(5)">TV5</button>
+      <button id="b6" onclick="selectTV(6)">TV6</button>
+    </div>
+    <p id="active_output">Sortida activa: TV1</p>
+    <div class="grid">
+      <button class="command" onclick="send('power')">Power</button>
+      <button class="command" onclick="send('vol-')">Vol -</button>
+      <button class="command" onclick="send('vol+')">Vol +</button>
+      <button class="command" onclick="send('canal-')">Ch -</button>
+      <button class="command" onclick="send('canal+')">Ch +</button>
+      <button class="command" onclick="send('num0')">0</button>
+      <button class="command" onclick="send('num1')">1</button>
+      <button class="command" onclick="send('num2')">2</button>
+      <button class="command" onclick="send('num3')">3</button>
+      <button class="command" onclick="send('num4')">4</button>
+      <button class="command" onclick="send('num5')">5</button>
+      <button class="command" onclick="send('num6')">6</button>
+      <button class="command" onclick="send('num7')">7</button>
+      <button class="command" onclick="send('num8')">8</button>
+      <button class="command" onclick="send('num9')">9</button>
+    </div>
+
+    <script>
+      let selected = 1;
+      function selectTV(n) {
+        selected = n;
+        fetch(`/set_output?tv=${n}`);
+        document.getElementById("active_output").innerText = "Sortida activa: TV" + n;
+        for (let i = 1; i <= 6; i++) {
+          document.getElementById("b"+i).classList.remove("active");
+        }
+        document.getElementById("b"+n).classList.add("active");
+      }
+      function send(cmd) {
+        fetch(`/button/${cmd}`);
+      }
+      selectTV(1);
+    </script>
+
+# Endpoint per canviar la sortida via web
+web_server_handler:
+  path: /set_output
+  method: GET
+  handler: |-
+    if (request->hasParam("tv")) {
+      int tv = request->getParam("tv")->value().toInt();
+      id(selected_output) = tv;
+    }
+    request->send(200, "text/plain", "OK");

@@ -1,0 +1,78 @@
+
+esphome:
+  name: multiIR
+  platform: ESP32
+  board: esp32dev
+
+# -------------------------
+# Globals per guardar nova configuració
+# -------------------------
+globals:
+  - id: new_ssid
+    type: std::string
+    restore_value: no
+    initial_value: ""
+  - id: new_password
+    type: std::string
+    restore_value: no
+    initial_value: ""
+  - id: new_ip
+    type: std::string
+    restore_value: no
+    initial_value: ""
+
+# -------------------------
+# Ethernet principal
+# -------------------------
+ethernet:
+  type: LAN8720
+  mdc_pin: GPIO23
+  mdio_pin: GPIO18
+  clk_mode: GPIO0_IN
+  phy_addr: 1
+  power_pin: GPIO16
+  manual_ip:
+    static_ip: 192.168.1.50   # IP inicial (es pot canviar via formulari)
+    gateway: 192.168.1.1
+    subnet: 255.255.255.0
+
+# -------------------------
+# Wi-Fi secundari amb AP per configuració
+# -------------------------
+wifi:
+  ap:
+    ssid: "multiIR-setup"
+    password: "12345678"
+
+captive_portal:
+
+# -------------------------
+# Web Server per formulari
+# -------------------------
+web_server:
+  port: 80
+  include_internal: true
+  on_request:
+    - lambda: |-
+        if (request->url() == "/config") {
+          if (request->has_param("ssid") && request->has_param("pass") && request->has_param("ip")) {
+            id(new_ssid) = request->get_param("ssid").c_str();
+            id(new_password) = request->get_param("pass").c_str();
+            id(new_ip) = request->get_param("ip").c_str();
+            request->send(200, "text/html", "<h1>Configuració rebuda! Reiniciant...</h1>");
+            ESP_LOGI("web", "Nova SSID: %s, Nova IP: %s", id(new_ssid).c_str(), id(new_ip).c_str());
+            delay(2000);
+            ESP.restart();
+          } else {
+            std::string html = "<html><body><h1>Configura Ethernet/Wi-Fi</h1>"
+                               "/config"
+                               "Nova SSID: <input type='text' name='ssid'><br>"
+                               "Password: <input type='text' name='pass'><br>"
+                               "Nova IP Ethernet: <input type='text' name='ip'><br>"
+                               "<input type='submit' value='Guardar'>"
+                               "</form></body></html>";
+            request->send(200, "text/html", html);
+          }
+        } else {
+          request->send(200, "text/html", "<h1>Benvingut a multiIR</h1>/configConfigura Xarxa</a>");
+        }

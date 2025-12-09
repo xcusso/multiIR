@@ -1,0 +1,242 @@
+My TV: Philips 65OLED803/12 Year 2020
+
+"PowerOff"
+ ESP-Home: RC5 address=0x00, command=0x3D
+ Tasmota:  {"Protocol":"RC5","Bits":12,"Data":"0x83D","DataLSB":"0x10BC","Repeat":0}
+ Tasmota:  {"Protocol":"RC5","Bits":12,"Data":"0x3D","DataLSB":"0xBC","Repeat":0}
+"PowerOn"
+ ESP-Home: RC5 address=0x00, command=0x3F
+ Tasmota:  {"Protocol":"RC5","Bits":12,"Data":"0x83F","DataLSB":"0x10FC","Repeat":0}
+ Tasmota:  {"Protocol":"RC5","Bits":12,"Data":"0x3F","DataLSB":"0xFC","Repeat":0}
+"PowerToggle"
+ ESP-Home: RC6 address=0x00, command=0x0C
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0xC","DataLSB":"0x30","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x1000C","DataLSB":"0x800030","Repeat":0}
+"0"
+ ESP-Home: RC6 address=0x00, command=0x00				
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x10000","DataLSB":"0x800000","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x","DataLSB":"0x","Repeat":0}
+"1"
+ ESP-Home: RC6 address=0x00, command=0x01
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x1","DataLSB":"0x80","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x10001","DataLSB":"0x800080","Repeat":0}
+"2"
+ ESP-Home: RC6 address=0x00, command=0x02
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x10002","DataLSB":"0x800040","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x2","DataLSB":"0x40","Repeat":0}
+"3"
+ ESP-Home: RC6 address=0x00, command=0x03 
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x10003","DataLSB":"0x8000C0","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x3","DataLSB":"0xC0","Repeat":0}
+"4"
+ ESP-Home: RC6 address=0x00, command=0x04 
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x4","DataLSB":"0x20","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x10004","DataLSB":"0x800020","Repeat":0}
+"5"
+ ESP-Home: RC6 address=0x00, command=0x05
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x10005","DataLSB":"0x8000A0","Repeat":0} 
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x5","DataLSB":"0xA0","Repeat":0}
+"6"
+ ESP-Home: RC6 address=0x00, command=0x06
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x6","DataLSB":"0x60","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x10006","DataLSB":"0x800060","Repeat":0}
+"7"
+ ESP-Home: RC6 address=0x00, command=0x07 
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x10007","DataLSB":"0x8000E0","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x7","DataLSB":"0xE0","Repeat":0}
+"8"
+ ESP-Home: RC6 address=0x00, command=0x08 
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x8","DataLSB":"0x10","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x10008","DataLSB":"0x800010","Repeat":0}
+"9"
+ ESP-Home: RC6 address=0x00, command=0x09
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x9","DataLSB":"0x90","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x10009","DataLSB":"0x800090","Repeat":0}
+"Mute"
+ ESP-Home: RC6 address=0x00, command=0x0D 
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0xD","DataLSB":"0xB0","Repeat":0} 
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x1000D","DataLSB":"0x8000B0","Repeat":0}
+"VolumeDown"
+ ESP-Home: RC6 address=0x00, command=0x11
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x11","DataLSB":"0x88","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x10011","DataLSB":"0x800088","Repeat":0}
+"VolumeUp"
+ ESP-Home: RC6 address=0x00, command=0x10 
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x10","DataLSB":"0x8","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x10010","DataLSB":"0x800008","Repeat":0}
+"ChannelPrev"
+ ESP-Home: RC6 address=0x00, command=0x0A
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0xA","DataLSB":"0x50","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x1000A","DataLSB":"0x800050","Repeat":0}
+"ChannelDown"
+ ESP-Home: RC6 address=0x00, command=0x21
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x21","DataLSB":"0x84","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x10021","DataLSB":"0x800084","Repeat":0}
+"ChannelUp"
+ ESP-Home: RC6 address=0x00, command=0x20
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x20","DataLSB":"0x4","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x10020","DataLSB":"0x800004","Repeat":0}
+"DirectionDown"
+ ESP-Home: RC6 address=0x00, command=0x59
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x59","DataLSB":"0x9A","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x10059","DataLSB":"0x80009A","Repeat":0}
+"DirectionLeft"
+ ESP-Home: RC6 address=0x00, command=0x5A 
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x5A","DataLSB":"0x5A","Repeat":0} 
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x1005A","DataLSB":"0x80005A","Repeat":0}
+"DirectionRight"
+ ESP-Home: RC6 address=0x00, command=0x5B
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x5B","DataLSB":"0xDA","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x1005B","DataLSB":"0x8000DA","Repeat":0}
+"DirectionUp"
+ ESP-Home: RC6 address=0x00, command=0x58
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x58","DataLSB":"0x1A","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x10058","DataLSB":"0x80001A","Repeat":0}
+"OK"
+ ESP-Home: RC6 address=0x00, command=0x5C
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x5C","DataLSB":"0x3A","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x1005C","DataLSB":"0x80003A","Repeat":0}
+"Stop"
+ ESP-Home: RC6 address=0x00, command=0x31
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x31","DataLSB":"0x8C","Repeat":0} 
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x10031","DataLSB":"0x80008C","Repeat":0}
+"Play"
+ ESP-Home: RC6 address=0x00, command=0x2C
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x2C","DataLSB":"0x34","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x1002C","DataLSB":"0x800034","Repeat":0}
+"Rewind"
+ ESP-Home: RC6 address=0x00, command=0x2B
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x2B","DataLSB":"0xD4","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x1002B","DataLSB":"0x8000D4","Repeat":0}
+"Pause",Received 
+ ESP-Home: RC6 address=0x00, command=0x30
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x30","DataLSB":"0xC","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x10030","DataLSB":"0x80000C","Repeat":0}
+"FastForward"
+ ESP-Home: RC6 address=0x00, command=0x28
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x28","DataLSB":"0x14","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x10028","DataLSB":"0x800014","Repeat":0}
+"Record"
+ ESP-Home: RC6 address=0x00, command=0x37
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x37","DataLSB":"0xEC","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x10037","DataLSB":"0x8000EC","Repeat":0}
+"Menu"
+ ESP-Home: RC6 address=0x00, command=0x57 
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x57","DataLSB":"0xEA","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x10057","DataLSB":"0x8000EA","Repeat":0}
+"Subtitle"
+ ESP-Home: RC6 address=0x00, command=0x4B, toggle=0x
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x4B","DataLSB":"0xD2","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x1004B","DataLSB":"0x8000D2","Repeat":0}
+"Back"
+ ESP-Home: RC6 address=0x00, command=0x0A
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0xA","DataLSB":"0x50","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x1000A","DataLSB":"0x800050","Repeat":0}
+"Teletext"
+ ESP-Home: RC6 address=0x00, command=0x3C
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x3C","DataLSB":"0x3C","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x1003C","DataLSB":"0x80003C","Repeat":0}
+"Search"
+ ESP-Home: RC6 address=0x00, command=0xB4
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0xB4","DataLSB":"0x2D","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x100B4","DataLSB":"0x80002D","Repeat":0}
+"Green"
+ ESP-Home: RC6 address=0x00, command=0x6E
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x6E","DataLSB":"0x76","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x1006E","DataLSB":"0x800076","Repeat":0}
+"Red"
+ ESP-Home: RC6 address=0x00, command=0x6D
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x6D","DataLSB":"0xB6","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x1006D","DataLSB":"0x8000B6","Repeat":0}
+"Blue"
+ ESP-Home: RC6 address=0x00, command=0x70 
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x70","DataLSB":"0xE","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x10070","DataLSB":"0x80000E","Repeat":0}
+"Yellow"
+ ESP-Home: RC6 address=0x00, command=0x6F 
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x6F","DataLSB":"0xF6","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x1006F","DataLSB":"0x8000F6","Repeat":0}
+"Guide"
+ ESP-Home: RC6 address=0x00, command=0xCC
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0xCC","DataLSB":"0x33","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x100CC","DataLSB":"0x800033","Repeat":0}
+"Info"
+ ESP-Home: RC6 address=0x00, command=0x0F
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0xF","DataLSB":"0xF0","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x1000F","DataLSB":"0x8000F0","Repeat":0}
+"PageDown"
+ ESP-Home: RC6 address=0x00, command=0x21
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x21","DataLSB":"0x84","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x10021","DataLSB":"0x800084","Repeat":0}
+"PageUp"
+ ESP-Home: RC6 address=0x00, command=0x20
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x20","DataLSB":"0x4","Repeat":0} 
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x10020","DataLSB":"0x800004","Repeat":0}
+"Exit"
+ ESP-Home: RC6 address=0x00, command=0x9F
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x9F","DataLSB":"0xF9","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x1009F","DataLSB":"0x8000F9","Repeat":0}
+"Netflix"
+ ESP-Home: RC6 address=0x00, command=0x76
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x76","DataLSB":"0x6E","Repeat":0} 
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x10076","DataLSB":"0x80006E","Repeat":0}
+"Settings"
+ ESP-Home: RC6 address=0x00, command=0xBF
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0xBF","DataLSB":"0xFD","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x100BF","DataLSB":"0x8000FD","Repeat":0}
+"Ambilight"
+ ESP-Home: RC6 address=0x00, command=0x8F
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x8F","DataLSB":"0xF1","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x1008F","DataLSB":"0x8000F1","Repeat":0}
+"GooglePlay"
+ ESP-Home: RC6 address=0x00, command=0x9F
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x9F","DataLSB":"0xF9","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x1009F","DataLSB":"0x8000F9","Repeat":0}
+"Home"
+ ESP-Home: RC6 address=0x00, command=0x54
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x54","DataLSB":"0x2A","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x10054","DataLSB":"0x80002A","Repeat":0}
+"InputHdmi1"
+ ESP-Home: RC5 address=0x03, command=0x06
+ Tasmota:  {"Protocol":"RC5","Bits":12,"Data":"0xC6","DataLSB":"0x63","Repeat":0}
+ Tasmota:  {"Protocol":"RC5","Bits":12,"Data":"0x8C6","DataLSB":"0x1063","Repeat":0}
+"InputHdmi2"
+ ESP-Home: RC5 address=0x03, command=0x04
+ Tasmota:  {"Protocol":"RC5","Bits":12,"Data":"0x8C4","DataLSB":"0x1023","Repeat":0}
+ Tasmota:  {"Protocol":"RC5","Bits":12,"Data":"0xC4","DataLSB":"0x23","Repeat":0}
+"InputHdmi3"
+ ESP-Home: RC5 address=0x03, command=0x08
+ Tasmota:  {"Protocol":"RC5","Bits":12,"Data":"0xC8","DataLSB":"0x13","Repeat":0}
+ Tasmota:  {"Protocol":"RC5","Bits":12,"Data":"0x8C8","DataLSB":"0x1013","Repeat":0}
+"InputHdmi4"
+ ESP-Home: RC5 address=0x03, command=0x09
+ Tasmota:  {"Protocol":"RC5","Bits":12,"Data":"0x8F9","DataLSB":"0x109F","Repeat":0}
+ Tasmota:  {"Protocol":"RC5","Bits":12,"Data":"0xF9","DataLSB":"0x9F","Repeat":0}
+"InputYPbPr"
+ ESP-Home: RC5 address=0x03, command=0x39
+ Tasmota:  {"Protocol":"RC5","Bits":12,"Data":"0x839","DataLSB":"0x109C","Repeat":0}
+ Tasmota:  {"Protocol":"RC5","Bits":12,"Data":"0x39","DataLSB":"0x9C","Repeat":0}
+"Multiview"
+ ESP-Home: RC6 address=0x00, command=0x5D
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x5D","DataLSB":"0xBA","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x1005D","DataLSB":"0x8000BA","Repeat":0}
+"Options"
+ ESP-Home: RC6 address=0x00, command=0x40
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x40","DataLSB":"0x2","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x10040","DataLSB":"0x800002","Repeat":0}
+"Signal"
+ ESP-Home: NEC address=0xFB04, command=0x6996
+ Tasmota:  {"Protocol":"NEC","Bits":32,"Data":"0x20DF6996","DataLSB":"0x4FB9669","Repeat":0}
+ Tasmota:  {"Protocol":"NEC","Bits":32,"Data":"0x20DF6996","DataLSB":"0x4FB9669","Repeat":0}
+"SmartMenu"
+ ESP-Home: RC6 address=0x00, command=0x54
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x54","DataLSB":"0x2A","Repeat":0} 
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x10054","DataLSB":"0x80002A","Repeat":0}
+"Source"
+ ESP-Home: RC6 address=0x00, command=0x38
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x38","DataLSB":"0x1C","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x10038","DataLSB":"0x80001C","Repeat":0}
+"TopPicks"
+ ESP-Home: RC6 address=0x00, command=0x74 
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x74","DataLSB":"0x2E","Repeat":0}
+ Tasmota:  {"Protocol":"RC6","Bits":20,"Data":"0x10074","DataLSB":"0x80002E","Repeat":0}

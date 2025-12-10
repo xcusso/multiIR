@@ -1,9 +1,14 @@
+# Versió RC00
 esphome:
   name: multiIR
   platform: ESP32
   board: esp32dev
 
   # APLICACIÓ DINÀMICA d'IP ESTÀTICA a ETH i (opcional) STA Wi‑Fi a l'arrencada
+  # ip: Ip ethernet
+  # gw: Gateway ethernet
+  # sn: subnet Mascara red ethernet
+  # dns: servidor dns ethernet
   on_boot:
     priority: 600
     then:
@@ -43,9 +48,15 @@ esphome:
           }
 
 logger:
-api:
-ota:
 
+api:
+  encryption:
+    key: !secret api_key
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+    
 # ---------- Globals persistents per config de xarxa ----------
 globals:
   - id: new_ssid
@@ -201,16 +212,16 @@ globals:
 # QUATRE emissors IR (canvia els GPIO!)
 remote_transmitter:
   - id: ir_tv1
-    pin: GPIOXX     # <-- posa GPIO real per TV1
+    pin: GPIO14     # GPIO per TV1
     carrier_duty_percent: 50%
   - id: ir_tv2
-    pin: GPIOXX     # <-- posa GPIO real per TV2
+    pin: GPIO12     # GPIO per TV2
     carrier_duty_percent: 50%
   - id: ir_tv3
-    pin: GPIOXX     # <-- posa GPIO real per TV3
+    pin: GPIO04     # GPIO per TV3
     carrier_duty_percent: 50%
   - id: ir_tv4
-    pin: GPIOXX     # <-- posa GPIO real per TV4
+    pin: GPIO02     # GPIO per TV4
     carrier_duty_percent: 50%
 
 # -------------------------------

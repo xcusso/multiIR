@@ -219,6 +219,67 @@ text_sensor:
     lambda: |-
       return WiFi.localIP().toString().c_str();
 
+### Retorna els protocols de cada TV
+  - platform: template
+    name: "TV1 protocol"
+    lambda: |-
+      switch (id(protocol_tv1)) {
+        case 1: return {"NEC"};
+        case 2: return {"RC5"};
+        case 3: return {"RC6"};
+        case 4: return {"Sony"};
+        case 5: return {"Samsung"};
+        case 6: return {"LG"};
+        case 4: return {"Panasonic"};
+        case 8: return {"RAW/PRONTO"};
+        default: return {"(no definit)"};
+      }
+
+  - platform: template
+    name: "TV2 protocol"
+    lambda: |-
+      switch (id(protocol_tv2)) {
+        case 1: return {"NEC"};
+        case 2: return {"RC5"};
+        case 3: return {"RC6"};
+        case 4: return {"Sony"};
+        case 5: return {"Samsung"};
+        case 6: return {"LG"};
+        case 4: return {"Panasonic"};
+        case 8: return {"RAW/PRONTO"};
+        default: return {"(no definit)"};
+      }
+
+  - platform: template
+    name: "TV3 protocol"
+    lambda: |-
+      switch (id(protocol_tv3)) {
+        case 1: return {"NEC"};
+        case 2: return {"RC5"};
+        case 3: return {"RC6"};
+        case 4: return {"Sony"};
+        case 5: return {"Samsung"};
+        case 6: return {"LG"};
+        case 4: return {"Panasonic"};
+        case 8: return {"RAW/PRONTO"};
+        default: return {"(no definit)"};
+      }
+
+  - platform: template
+    name: "TV4 protocol"
+    lambda: |-
+      switch (id(protocol_tv4)) {
+        case 1: return {"NEC"};
+        case 2: return {"RC5"};
+        case 3: return {"RC6"};
+        case 4: return {"Sony"};
+        case 5: return {"Samsung"};
+        case 6: return {"LG"};
+        case 4: return {"Panasonic"};
+        case 8: return {"RAW/PRONTO"};
+        default: return {"(no definit)"};
+      }
+
 # =========================================================
 # =                BLOC IR MULTI-SORTIDA                 =
 # =========================================================
@@ -271,14 +332,14 @@ button:
     on_press:
       then:
         - lambda: |-
-            if (id(selected_tv) = 1) {
-            id(protocol_tv1) == 1;
-            } else if (id(selected_tv) = 2) {
-            id(protocol_tv2) == 1;
-            } else if (id(selected_tv) = 3) {
-            id(protocol_tv3) == 1;
-            } else if (id(selected_tv) = 4) {
-            id(protocol_tv4) == 1}
+            if (id(selected_tv) == 1) {
+            id(protocol_tv1) = 1;
+            } else if (id(selected_tv) == 2) {
+            id(protocol_tv2) = 1;
+            } else if (id(selected_tv) == 3) {
+            id(protocol_tv3) = 1;
+            } else if (id(selected_tv) == 4) {
+            id(protocol_tv4) = 1}
 
   - platform: template
     name: "Protocol RC5"
@@ -286,14 +347,14 @@ button:
     on_press:
       then:
         - lambda: |-
-            if (id(selected_tv) = 1) {
-            id(protocol_tv1) == 2;
-            } else if (id(selected_tv) = 2) {
-            id(protocol_tv2) == 2;
-            } else if (id(selected_tv) = 3) {
-            id(protocol_tv3) == 2;
-            } else if (id(selected_tv) = 4) {
-            id(protocol_tv4) == 2}
+            if (id(selected_tv) == 1) {
+            id(protocol_tv1) = 2;
+            } else if (id(selected_tv) == 2) {
+            id(protocol_tv2) = 2;
+            } else if (id(selected_tv) == 3) {
+            id(protocol_tv3) = 2;
+            } else if (id(selected_tv) == 4) {
+            id(protocol_tv4) = 2}
 
   - platform: template
     name: "Protocol RC6"
@@ -301,14 +362,14 @@ button:
     on_press:
       then:
         - lambda: |-
-            if (id(selected_tv) = 1) {
-            id(protocol_tv1) == 3;
-            } else if (id(selected_tv) = 2) {
-            id(protocol_tv2) == 3;
-            } else if (id(selected_tv) = 3) {
-            id(protocol_tv3) == 3;
-            } else if (id(selected_tv) = 4) {
-            id(protocol_tv4) == 3}
+            if (id(selected_tv) == 1) {
+            id(protocol_tv1) = 3;
+            } else if (id(selected_tv) == 2) {
+            id(protocol_tv2) = 3;
+            } else if (id(selected_tv) == 3) {
+            id(protocol_tv3) = 3;
+            } else if (id(selected_tv) == 4) {
+            id(protocol_tv4) = 3}
 
   - platform: template
     name: "Protocol Sony"
@@ -316,14 +377,14 @@ button:
     on_press:
       then:
         - lambda: |-
-            if (id(selected_tv) = 1) {
-            id(protocol_tv1) == 4;
-            } else if (id(selected_tv) = 2) {
-            id(protocol_tv2) == 4;
-            } else if (id(selected_tv) = 3) {
-            id(protocol_tv3) == 4;
-            } else if (id(selected_tv) = 4) {
-            id(protocol_tv4) == 4}            
+            if (id(selected_tv) == 1) {
+            id(protocol_tv1) = 4;
+            } else if (id(selected_tv) == 2) {
+            id(protocol_tv2) = 4;
+            } else if (id(selected_tv) == 3) {
+            id(protocol_tv3) = 4;
+            } else if (id(selected_tv) == 4) {
+            id(protocol_tv4) = 4}            
 
   - platform: template
     name: "Protocol Samsung"
@@ -331,14 +392,14 @@ button:
     on_press:
       then:
         - lambda: |-
-            if (id(selected_tv) = 1) {
-            id(protocol_tv1) == 5;
-            } else if (id(selected_tv) = 2) {
-            id(protocol_tv2) == 5;
-            } else if (id(selected_tv) = 3) {
-            id(protocol_tv3) == 5;
-            } else if (id(selected_tv) = 4) {
-            id(protocol_tv4) == 5}            
+            if (id(selected_tv) == 1) {
+            id(protocol_tv1) = 5;
+            } else if (id(selected_tv) == 2) {
+            id(protocol_tv2) = 5;
+            } else if (id(selected_tv) == 3) {
+            id(protocol_tv3) = 5;
+            } else if (id(selected_tv) == 4) {
+            id(protocol_tv4) = 5}            
                       
   - platform: template
     name: "Protocol LG"
@@ -346,14 +407,14 @@ button:
     on_press:
       then:
         - lambda: |-
-            if (id(selected_tv) = 1) {
-            id(protocol_tv1) == 6;
-            } else if (id(selected_tv) = 2) {
-            id(protocol_tv2) == 6;
-            } else if (id(selected_tv) = 3) {
-            id(protocol_tv3) == 6;
-            } else if (id(selected_tv) = 4) {
-            id(protocol_tv4) == 6}     
+            if (id(selected_tv) == 1) {
+            id(protocol_tv1) = 6;
+            } else if (id(selected_tv) == 2) {
+            id(protocol_tv2) = 6;
+            } else if (id(selected_tv) == 3) {
+            id(protocol_tv3) = 6;
+            } else if (id(selected_tv) == 4) {
+            id(protocol_tv4) = 6}     
 
   - platform: template
     name: "Protocol Panasonic"
@@ -361,14 +422,14 @@ button:
     on_press:
       then:
         - lambda: |-
-            if (id(selected_tv) = 1) {
-            id(protocol_tv1) == 7;
-            } else if (id(selected_tv) = 2) {
-            id(protocol_tv2) == 7;
-            } else if (id(selected_tv) = 3) {
-            id(protocol_tv3) == 7;
-            } else if (id(selected_tv) = 4) {
-            id(protocol_tv4) == 7}
+            if (id(selected_tv) == 1) {
+            id(protocol_tv1) = 7;
+            } else if (id(selected_tv) == 2) {
+            id(protocol_tv2) = 7;
+            } else if (id(selected_tv) == 3) {
+            id(protocol_tv3) = 7;
+            } else if (id(selected_tv) == 4) {
+            id(protocol_tv4) = 7}
 
   - platform: template
     name: "Protocol RAW/Pronto"
@@ -376,14 +437,14 @@ button:
     on_press:
       then:
         - lambda: |-
-            if (id(selected_tv) = 1) {
-            id(protocol_tv1) == 8;
-            } else if (id(selected_tv) = 2) {
-            id(protocol_tv2) == 8;
-            } else if (id(selected_tv) = 3) {
-            id(protocol_tv3) == 8;
-            } else if (id(selected_tv) = 4) {
-            id(protocol_tv4) == 8}
+            if (id(selected_tv) == 1) {
+            id(protocol_tv1) = 8;
+            } else if (id(selected_tv) == 2) {
+            id(protocol_tv2) = 8;
+            } else if (id(selected_tv) == 3) {
+            id(protocol_tv3) = 8;
+            } else if (id(selected_tv) == 4) {
+            id(protocol_tv4) = 8}
             
 # -------------------------------
 # Botons: 20 funcions

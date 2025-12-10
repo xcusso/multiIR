@@ -84,6 +84,35 @@ globals:
     restore_value: yes
     initial_value: ""
 
+# Globals de selecció
+  - id: selected_tv
+    type: int
+    restore_value: no
+    initial_value: '1'        # TV1 per defecte
+
+# Guardem quatre valors de protocol    
+  - id: protocol_tv1
+    type: int
+    restore_value: yes
+    initial_value: '3'        # 1=NEC, 2=RC5, 3=RC6 (per defecte RC6)
+  - id: protocol_tv2
+    type: int
+    restore_value: yes
+    initial_value: '3'        # 1=NEC, 2=RC5, 3=RC6 (per defecte RC6)   
+  - id: protocol_tv3
+    type: int
+    restore_value: yes
+    initial_value: '3'        # 1=NEC, 2=RC5, 3=RC6 (per defecte RC6) 
+  - id: protocol_tv4
+    type: int
+    restore_value: yes
+    initial_value: '3'        # 1=NEC, 2=RC5, 3=RC6 (per defecte RC6) 
+    
+  - id: selected_function
+    type: int
+    restore_value: no
+    initial_value: '1'        # Funció 1 per defecte   
+
 # ---------- Ethernet principal (WT32‑ETH01: LAN8720) ----------
 ethernet:
   type: LAN8720
@@ -194,36 +223,7 @@ text_sensor:
 # =                BLOC IR MULTI-SORTIDA                 =
 # =========================================================
 
-# Globals de selecció
-globals:
-  - id: selected_tv
-    type: int
-    restore_value: no
-    initial_value: '1'        # TV1 per defecte
 
-# Guardem quatre valors de protocol    
-  - id: protocol_tv1
-    type: int
-    restore_value: yes
-    initial_value: '3'        # 1=NEC, 2=RC5, 3=RC6 (per defecte RC6)
-  - id: protocol_tv2
-    type: int
-    restore_value: yes
-    initial_value: '3'        # 1=NEC, 2=RC5, 3=RC6 (per defecte RC6)   
-  - id: protocol_tv3
-    type: int
-    restore_value: yes
-    initial_value: '3'        # 1=NEC, 2=RC5, 3=RC6 (per defecte RC6) 
-  - id: protocol_tv4
-    type: int
-    restore_value: yes
-    initial_value: '3'        # 1=NEC, 2=RC5, 3=RC6 (per defecte RC6) 
-    
-  - id: selected_function
-    type: int
-    restore_value: no
-    initial_value: '1'        # Funció 1 per defecte
-    
 
 # QUATRE emissors IR
 remote_transmitter:

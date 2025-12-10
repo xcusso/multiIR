@@ -471,16 +471,94 @@ button:
             } else if (id(selected_tv) == 4) {
             id(protocol_tv4) = 8}
 
-# BOTONS MANDO
-   - platform: template
+
+# BoTONS 
+  - platform: template
     name: "ON"
     id: b_on
     on_press:
       then:
-        - lambda |-
-            if ((id(selected_tv) == 1) & (id(protocol_tv1) == 3)) {
-            return remote_transmitter.transmit_rc6:
-             
+        - lambda: |-
+            using namespace esphome::remote_base;
+
+            const int tv    = id(selected_tv);
+            const int proto = id(selected_protocol);
+
+            // Validació bàsica
+            if (tv < 1 || tv > 4) {
+              ESP_LOGW("IR", "TV fora de rang: %d", tv);
+              return;
+            }
+
+            // Triar transmissor segons TV
+            auto &tx = (tv == 1) ? id(ir_tv1)
+                       : (tv == 2) ? id(ir_tv2)
+                       : (tv == 3) ? id(ir_tv3)
+                                   : id(ir_tv4);
+
+            auto call = tx.transmit();
+            ESP_LOGI("IR", "ON: TV=%d, proto=%d", tv, proto);
+
+            if (proto == 3) {            // RC6
+              // Alternança del bit toggle per ser “més realistes”
+              static uint8_t toggle = 0;
+
+              RC6Data d{};
+              d.mode    = 0;
+              d.toggle  = toggle;
+              d.address = 0x00;          // Philips acostuma a 0x00
+              d.command = 0x0C;          // PowerToggle
+              RC6Protocol().encode(call.get_data(), d);
+              call.perform();
+
+              toggle ^= 1;               // canvia el bit per la pròxima vegada
+
+            } else if (proto == 2) {     // RC5 (exemple)
+              RC5Data d{};
+              d.toggle  = 0;             // pots alternar si ho vols
+              d.address = 0x00;          // adapta a la teva TV
+              d.command = 0x3F;          // exemple de Power
+              RC5Protocol().encode(call.get_data(), d);
+              call.perform();
+
+            } else {
+              ESP_LOGW("IR", "Protocol no implementat: %d", proto);
+            }
+          
+
+ - remote_transmitter.transmit_rc6:
+                        transmitter_id: ir_tv1
+                        address: 0x00   # Philips acostuma a 0x00
+                        command: !lambda |-
+                          // Mapa de 20 funcions -> comandes RC6 (TV1)
+                          // Valors extrets del fil (Philips 65OLED803, RC6)  (PowerToggle=0x0C, Vol+=0x10, Vol-=0x11, Mute=0x0D, Ch+=0x20, Ch-=0x21, Up=0x58, Down=0x59, Left=0x5A, Right=0x5B, OK=0x5C, Home=0x54, Source=0x38, Menu=0x57, Exit=0x9F, Netflix=0x76, Stop=0x31, Play=0x2C, Pause=0x30, FF=0x28)
+                          const uint8_t idx = id(selected_function);
+                          static const uint8_t cmd[21] = {
+                            0x00, // 0 (no s'usa)
+                            0x0C, // 1  PowerToggle
+                            0x10, // 2  VolumeUp
+                            0x11, // 3  VolumeDown
+                            0x0D, // 4  Mute
+                            0x20, // 5  ChannelUp
+                            0x21, // 6  ChannelDown
+                            0x58, // 7  Up
+                            0x59, // 8  Down
+                            0x5A, // 9  Left
+                            0x5B, // 10 Right
+                            0x5C, // 11 OK
+                            0x54, // 12 Home (SmartMenu)
+                            0x38, // 13 Source
+                            0x57, // 14 Menu
+                            0x9F, // 15 Exit
+                            0x76, // 16 Netflix
+                            0x31, // 17 Stop
+                            0x2C, // 18 Play
+                            0x30, // 19 Pause
+                            0x28  // 20 FastForward
+                          };
+                          return cmd[(idx <= 20) ? idx : 0];
+
+
       
         - lambda: |-
             if (id(selected_tv) == 1) & (id(protocol_tv1) == 3 {
@@ -517,190 +595,7 @@ button:
         - script.execute: send_ir
 {% endfor %}
 
-# -------------------------------
-# SCRIPT principal d'enviament
-# -------------------------------
-script:
-  - id: send_ir
-    mode: queued
-    then:
-      - lambda: |-
-          ESP_LOGI("IR", "Funció=%d, TV=%d",
-                   id(selected_function), id(selected_tv));
-
-
-      - if (id(selected_protocol) == 3;
-        then : 
-          - remote_transmitter.transmit_rc6:
-            if (id(selected_tv) == 1
-            then 
-            transmitter_id: ir_tv1
-            else if (id(selected_tv) == 2
-            then 
-            transmitter_id: ir_tv2
-            else if (id(selected_tv) == 3
-            then 
-            transmitter_id: ir_tv3
-            else if (id(selected_tv) == 4
-            then 
-            transmitter_id: ir_tv4
-
-
-            address: 0x00 
-            command: !lambda |-
-                          // Mapa de 20 funcions -> comandes RC6 (TV1)
-                          // Valors extrets del fil (Philips 65OLED803, RC6)  (PowerToggle=0x0C, Vol+=0x10, Vol-=0x11, Mute=0x0D, Ch+=0x20, Ch-=0x21, Up=0x58, Down=0x59, Left=0x5A, Right=0x5B, OK=0x5C, Home=0x54, Source=0x38, Menu=0x57, Exit=0x9F, Netflix=0x76, Stop=0x31, Play=0x2C, Pause=0x30, FF=0x28)
-                          const uint8_t idx = id(selected_function);
-                          static const uint8_t cmd[21] = {
-                            0x00, // 0 (no s'usa)
-                            0x0C, // 1  PowerToggle
-                            0x10, // 2  VolumeUp
-                            0x11, // 3  VolumeDown
-                            0x0D, // 4  Mute
-                            0x20, // 5  ChannelUp
-                            0x21, // 6  ChannelDown
-                            0x58, // 7  Up
-                            0x59, // 8  Down
-                            0x5A, // 9  Left
-                            0x5B, // 10 Right
-                            0x5C, // 11 OK
-                            0x54, // 12 Home (SmartMenu)
-                            0x38, // 13 Source
-                            0x57, // 14 Menu
-                            0x9F, // 15 Exit
-                            0x76, // 16 Netflix
-                            0x31, // 17 Stop
-                            0x2C, // 18 Play
-                            0x30, // 19 Pause
-                            0x28  // 20 FastForward
-                          };
-                          return cmd[(idx <= 20) ? idx : 0]; 
 
 
 
 
-##### XAVI
-      # ------- RC6 (Philips) -------
-      - if:
-          condition:
-            lambda: 'return id(selected_protocol) == 3;'
-          then:
-            - choose:
-                # --- Selecció del transmissor segons TV ---
-                - condition: { lambda: 'return id(selected_tv) == 1;' }
-                  then:
-                    - remote_transmitter.transmit_rc6:
-                        transmitter_id: ir_tv1
-                        address: 0x00   # Philips acostuma a 0x00
-                        command: !lambda |-
-                          // Mapa de 20 funcions -> comandes RC6 (TV1)
-                          // Valors extrets del fil (Philips 65OLED803, RC6)  (PowerToggle=0x0C, Vol+=0x10, Vol-=0x11, Mute=0x0D, Ch+=0x20, Ch-=0x21, Up=0x58, Down=0x59, Left=0x5A, Right=0x5B, OK=0x5C, Home=0x54, Source=0x38, Menu=0x57, Exit=0x9F, Netflix=0x76, Stop=0x31, Play=0x2C, Pause=0x30, FF=0x28)
-                          const uint8_t idx = id(selected_function);
-                          static const uint8_t cmd[21] = {
-                            0x00, // 0 (no s'usa)
-                            0x0C, // 1  PowerToggle
-                            0x10, // 2  VolumeUp
-                            0x11, // 3  VolumeDown
-                            0x0D, // 4  Mute
-                            0x20, // 5  ChannelUp
-                            0x21, // 6  ChannelDown
-                            0x58, // 7  Up
-                            0x59, // 8  Down
-                            0x5A, // 9  Left
-                            0x5B, // 10 Right
-                            0x5C, // 11 OK
-                            0x54, // 12 Home (SmartMenu)
-                            0x38, // 13 Source
-                            0x57, // 14 Menu
-                            0x9F, // 15 Exit
-                            0x76, // 16 Netflix
-                            0x31, // 17 Stop
-                            0x2C, // 18 Play
-                            0x30, // 19 Pause
-                            0x28  // 20 FastForward
-                          };
-                          return cmd[(idx <= 20) ? idx : 0];
-
-                - condition: { lambda: 'return id(selected_tv) == 2;' }
-                  then:
-                    - remote_transmitter.transmit_rc6:
-                        transmitter_id: ir_tv2
-                        address: 0x00
-                        command: !lambda |-
-                          // TODO: Omple amb els codis RC6 per a la TV2
-                          const uint8_t idx = id(selected_function);
-                          static const uint8_t cmd[21] = {0};
-                          return cmd[(idx <= 20) ? idx : 0];
-
-                - condition: { lambda: 'return id(selected_tv) == 3;' }
-                  then:
-                    - remote_transmitter.transmit_rc6:
-                        transmitter_id: ir_tv3
-                        address: 0x00
-                        command: !lambda |-
-                          // TODO: Omple amb els codis RC6 per a la TV3
-                          const uint8_t idx = id(selected_function);
-                          static const uint8_t cmd[21] = {0};
-                          return cmd[(idx <= 20) ? idx : 0];
-
-                - condition: { lambda: 'return id(selected_tv) == 4;' }
-                  then:
-                    - remote_transmitter.transmit_rc6:
-                        transmitter_id: ir_tv4
-                        address: 0x00
-                        command: !lambda |-
-                          // TODO: Omple amb els codis RC6 per a la TV4
-                          const uint8_t idx = id(selected_function);
-                          static const uint8_t cmd[21] = {0};
-                          return cmd[(idx <= 20) ? idx : 0];
-
-      # ------- RC5 (exemple: HDMI inputs) -------
-      - if:
-          condition:
-            lambda: 'return id(selected_protocol) == 2;'
-          then:
-            - choose:
-                - condition: { lambda: 'return id(selected_tv) == 1;' }
-                  then:
-                    - remote_transmitter.transmit_rc5:
-                        transmitter_id: ir_tv1
-                        address: !lambda |-
-                          // Exemple: HDMI inputs en Philips fan servir address 0x03
-                          return 0x03;
-                        command: !lambda |-
-                          // Map: Funció 1..4 -> HDMI1..4; la resta 0
-                          const uint8_t idx = id(selected_function);
-                          static const uint8_t hdmi_cmd[21] = {
-                            0x00, 0x06, 0x04, 0x08, 0x09, // 1..4
-                            0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0
-                          };
-                          return hdmi_cmd[(idx <= 20) ? idx : 0];
-                # TV2..4: replica i omple segons necessitis
-
-      # ------- NEC (exemple) -------
-      - if:
-          condition:
-            lambda: 'return id(selected_protocol) == 1;'
-          then:
-            - choose:
-                - condition: { lambda: 'return id(selected_tv) == 1;' }
-                  then:
-                    - remote_transmitter.transmit_nec:
-                        transmitter_id: ir_tv1
-                        address: !lambda |-
-                          // Exemple: "Signal" del fil (NEC address 0xFB04, command 0x6996)
-                          return 0xFB04;
-                        command: !lambda |-
-                          const uint16_t map_nec[21] = {
-                            0, 0x6996 /*1*/, 0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0
-                          };
-                          const uint8_t idx = id(selected_function);
-                          return map_nec[(idx <= 20) ? idx : 0];
-                # TV2..4: replica i omple segons necessitis
-
-      # ------- Placeholder per altres protocols (4..8) -------
-      - if:
-          condition:
-            lambda: 'return id(selected_protocol) >= 4;'
-          then:
-            - logger.log: "Protocol no implementat (encara). Omple el bloc a l'script."

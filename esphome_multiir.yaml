@@ -89,6 +89,11 @@ globals:
     type: int
     restore_value: no
     initial_value: '1'        # TV1 per defecte
+    
+  - id: selected_protocol
+    type: int
+    restore_value: no
+    initial_value: '3'        # Protocol 3 (RC6) per defecte
 
 # Guardem quatre valors de protocol    
   - id: protocol_tv1
@@ -308,19 +313,39 @@ button:
   - platform: template
     name: "Selecciona TV1"
     id: sel_tv_1
-    on_press: { then: [globals.set: {id: selected_tv, value: '1'} ] }
+    on_press:
+      then: 
+        - lambda: |- 
+            id(selected_tv) = 1;
+            id(selected_protocol) = id(protocol_tv1);
+
+        
   - platform: template
     name: "Selecciona TV2"
     id: sel_tv_2
-    on_press: { then: [globals.set: {id: selected_tv, value: '2'} ] }
+    on_press: 
+      then: 
+        - lambda: |- 
+            id(selected_tv) = 2;
+            id(selected_protocol) = id(protocol_tv2);
+            
   - platform: template
     name: "Selecciona TV3"
     id: sel_tv_3
-    on_press: { then: [globals.set: {id: selected_tv, value: '3'} ] }
+    on_press:
+      then: 
+        - lambda: |- 
+            id(selected_tv) = 3;
+            id(selected_protocol) = id(protocol_tv3);
+
   - platform: template
     name: "Selecciona TV4"
     id: sel_tv_4
-    on_press: { then: [globals.set: {id: selected_tv, value: '4'} ] }
+    on_press: 
+      then: 
+        - lambda: |- 
+            id(selected_tv) = 4;
+            id(selected_protocol) = id(protocol_tv4);
 
 # -------------------------------
 # Botons: Selecció de protocol (8)
@@ -445,7 +470,31 @@ button:
             id(protocol_tv3) = 8;
             } else if (id(selected_tv) == 4) {
             id(protocol_tv4) = 8}
-            
+
+# BOTONS MANDO
+   - platform: template
+    name: "ON"
+    id: b_on
+    on_press:
+      then:
+        - lambda |-
+            if ((id(selected_tv) == 1) & (id(protocol_tv1) == 3)) {
+            return remote_transmitter.transmit_rc6:
+             
+      
+        - lambda: |-
+            if (id(selected_tv) == 1) & (id(protocol_tv1) == 3 {
+            - lo
+            if (id(protocol_tv1) = 8;
+            } else if (id(selected_tv) == 2) {
+            id(protocol_tv2) = 8;
+            } else if (id(selected_tv) == 3) {
+            id(protocol_tv3) = 8;
+            } else if (id(selected_tv) == 4) {
+            id(protocol_tv4) = 8}           
+
+
+
 # -------------------------------
 # Botons: 20 funcions
 # cadascun guarda l'índex i crida l'script principal
@@ -455,6 +504,15 @@ button:
     name: "Funció {{ '%02d' % i }}"
     on_press:
       then:
+        - lambda: |-
+            if (id(selected_tv) == 1) {
+            id(selected_protocol) = id(protocol_tv1);
+            } else if (id(selected_tv) == 2) {
+             id(selected_protocol) = id(protocol_tv2);;
+            } else if (id(selected_tv) == 3) {
+             id(selected_protocol) = id(protocol_tv3);;
+            } else if (id(selected_tv) == 4) {
+             id(selected_protocol) = id(protocol_tv4);}
         - globals.set: { id: selected_function, value: '{{ i }}' }
         - script.execute: send_ir
 {% endfor %}
@@ -470,6 +528,58 @@ script:
           ESP_LOGI("IR", "Funció=%d, TV=%d",
                    id(selected_function), id(selected_tv));
 
+
+      - if (id(selected_protocol) == 3;
+        then : 
+          - remote_transmitter.transmit_rc6:
+            if (id(selected_tv) == 1
+            then 
+            transmitter_id: ir_tv1
+            else if (id(selected_tv) == 2
+            then 
+            transmitter_id: ir_tv2
+            else if (id(selected_tv) == 3
+            then 
+            transmitter_id: ir_tv3
+            else if (id(selected_tv) == 4
+            then 
+            transmitter_id: ir_tv4
+
+
+            address: 0x00 
+            command: !lambda |-
+                          // Mapa de 20 funcions -> comandes RC6 (TV1)
+                          // Valors extrets del fil (Philips 65OLED803, RC6)  (PowerToggle=0x0C, Vol+=0x10, Vol-=0x11, Mute=0x0D, Ch+=0x20, Ch-=0x21, Up=0x58, Down=0x59, Left=0x5A, Right=0x5B, OK=0x5C, Home=0x54, Source=0x38, Menu=0x57, Exit=0x9F, Netflix=0x76, Stop=0x31, Play=0x2C, Pause=0x30, FF=0x28)
+                          const uint8_t idx = id(selected_function);
+                          static const uint8_t cmd[21] = {
+                            0x00, // 0 (no s'usa)
+                            0x0C, // 1  PowerToggle
+                            0x10, // 2  VolumeUp
+                            0x11, // 3  VolumeDown
+                            0x0D, // 4  Mute
+                            0x20, // 5  ChannelUp
+                            0x21, // 6  ChannelDown
+                            0x58, // 7  Up
+                            0x59, // 8  Down
+                            0x5A, // 9  Left
+                            0x5B, // 10 Right
+                            0x5C, // 11 OK
+                            0x54, // 12 Home (SmartMenu)
+                            0x38, // 13 Source
+                            0x57, // 14 Menu
+                            0x9F, // 15 Exit
+                            0x76, // 16 Netflix
+                            0x31, // 17 Stop
+                            0x2C, // 18 Play
+                            0x30, // 19 Pause
+                            0x28  // 20 FastForward
+                          };
+                          return cmd[(idx <= 20) ? idx : 0]; 
+
+
+
+
+##### XAVI
       # ------- RC6 (Philips) -------
       - if:
           condition:

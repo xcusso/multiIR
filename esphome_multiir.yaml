@@ -209,7 +209,7 @@ globals:
     restore_value: no
     initial_value: '1'        # Funció 1 per defecte
 
-# QUATRE emissors IR (canvia els GPIO!)
+# QUATRE emissors IR
 remote_transmitter:
   - id: ir_tv1
     pin: GPIO14     # GPIO per TV1

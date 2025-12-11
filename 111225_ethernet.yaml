@@ -1,36 +1,35 @@
-
 esphome:
   name: multiir
-  platform: ESP32
-  board: esp-wrover-kit
+  # on_boot és vàlid en ESPHome (va dins "esphome:", no "esp32:")
 
-  # Incloem codi C++ inline per gestionar events ETH i SoftAP
   on_boot:
     priority: -100
     then:
       - lambda: |-
-          // 1) Hostname ETH
-          ETH.setHostname("multiir");  // establir nom abans de DHCP
-          // 2) Si hi ha una IP estàtica guardada, l'apliquem:
-          auto ip = IPAddress(id(ip1).state, id(ip2).state, id(ip3).state, id(ip4).state);
-          auto gw = IPAddress(id(gw1).state, id(gw2).state, id(gw3).state, id(gw4).state);
-          auto nm = IPAddress(id(nm1).state, id(nm2).state, id(nm3).state, id(nm4).state);
-          auto d1 = IPAddress(id(dns1_1).state, id(dns1_2).state, id(dns1_3).state, id(dns1_4).state);
-          auto d2 = IPAddress(id(dns2_1).state, id(dns2_2).state, id(dns2_3).state, id(dns2_4).state);
-          // Validació molt bàsica (evita 0.0.0.0)
-          if (ip != IPAddress(0,0,0,0) && nm != IPAddress(0,0,0,0) && gw != IPAddress(0,0,0,0)) {
-            ETH.config(ip, gw, nm, d1, d2);  // aplica IP estàtica
+          // Estableix hostname per ETH abans del DHCP
+          ETH.setHostname("multiir");
+
+          // Llegeix valors guardats per IP estàtica
+          auto ip  = IPAddress(id(ip1).state, id(ip2).state, id(ip3).state, id(ip4).state);
+          auto gw  = IPAddress(id(gw1).state, id(gw2).state, id(gw3).state, id(gw4).state);
+          auto nm  = IPAddress(id(nm1).state, id(nm2).state, id(nm3).state, id(nm4).state);
+          auto d1  = IPAddress(id(dns1_1).state, id(dns1_2).state, id(dns1_3).state, id(dns1_4).state);
+          auto d2  = IPAddress(id(dns2_1).state, id(dns2_2).state, id(dns2_3).state, id(dns2_4).state);
+
+          // Si tenim una IP vàlida, apliquem IP estàtica
+          if (ip != IPAddress(0,0,0,0) && gw != IPAddress(0,0,0,0) && nm != IPAddress(0,0,0,0)) {
+            ETH.config(ip, gw, nm, d1, d2);
           }
 
-          // 3) Subscripció a esdeveniments d'ETH per detectar link up/down
+          // Subscripció a esdeveniments ETH (Arduino core)
           Network.onEvent({
             switch (event) {
               case ARDUINO_EVENT_ETH_CONNECTED:
-                // Link ETH pujat: parem AP si estigués engegat
+                // Tanca l'AP quan el link ETH puja
                 WiFi.softAPdisconnect(true);
                 break;
               case ARDUINO_EVENT_ETH_DISCONNECTED:
-                // Link ETH caigut: segons preferència -> REINICI per entrar en mode AP
+                // Segons el flux que vols: reinicia i entra en AP
                 ESP.restart();
                 break;
               default:
@@ -38,14 +37,15 @@ esphome:
             }
           });
 
-          // 4) Si acabem de reiniciar (i no hi ha link ETH), obrim AP per configuració
-          // Nota: com ESPHome no permet el component 'wifi:' amb ethernet,
-          // utilitzem l'API Arduino per SoftAP (SSID + password).
-          // AP: multiir / 12345678
-          // Arrenca sempre AP a l'inici i si el link ETH puja el tancarem automàticament.
+          // En aquest punt (després d'un reinici amb el cable desconnectat) obrim l'AP
+          // Obertura d'AP sense declarar component wifi:
           WiFi.mode(WIFI_AP);
-          WiFi.softAP("multiir", "12345678");  // SSID i password
-          // Opcional: fixa canal o IP AP si vols (per defecte 192.168.4.1)
+          WiFi.softAP("multiir", "12345678"); // SSID / passwd
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
 
 logger:
   level: DEBUG
@@ -62,174 +62,71 @@ mdns:
 web_server:
   port: 80
   version: 3
-  local: true
-  # Sense auth (em dius que "no cal")
+  local: true  # JS/CSS locals per funcionar sense internet
+  # sense auth per petició teva (es pot afegir)
 
-# --- ETHERNET WT32-ETH01 (LAN8720) ---
 ethernet:
   type: LAN8720
   mdc_pin: GPIO23
   mdio_pin: GPIO18
-  # En ESPHome modern és:
   clk:
     pin: GPIO0
     mode: CLK_EXT_IN
   phy_addr: 1
   power_pin: GPIO16
-  # Per defecte DHCP; el mode estàtic l'apliquem runtime amb ETH.config()
+  # DHCP per defecte; si guardes IP, s'aplica amb ETH.config() a on_boot
 
-# --- Entitats per configurar IP/Màscara/Gateway/DNS via web_server ---
-# (queden persistides a flash amb restore_value)
+# --- Entrades per IP/màscara/gateway/DNS (persistents) ---
 number:
   # IP
   - platform: template
-    name: "IP o1"
-    id: ip1
-    min_value: 0
-    max_value: 255
-    step: 1
-    restore_value: true
+    name: "IP o1"    ; id: ip1 ; min_value: 0 ; max_value: 255 ; step: 1 ; restore_value: true
   - platform: template
-    name: "IP o2"
-    id: ip2
-    min_value: 0
-    max_value: 255
-    step: 1
-    restore_value: true
+    name: "IP o2"    ; id: ip2 ; min_value: 0 ; max_value: 255 ; step: 1 ; restore_value: true
   - platform: template
-    name: "IP o3"
-    id: ip3
-    min_value: 0
-    max_value: 255
-    step: 1
-    restore_value: true
+    name: "IP o3"    ; id: ip3 ; min_value: 0 ; max_value: 255 ; step: 1 ; restore_value: true
   - platform: template
-    name: "IP o4"
-    id: ip4
-    min_value: 0
-    max_value: 255
-    step: 1
-    restore_value: true
+    name: "IP o4"    ; id: ip4 ; min_value: 0 ; max_value: 255 ; step: 1 ; restore_value: true
 
-  # Subnet mask
+  # Màscara
   - platform: template
-    name: "Mask o1"
-    id: nm1
-    min_value: 0
-    max_value: 255
-    step: 1
-    restore_value: true
+    name: "Mask o1"  ; id: nm1 ; min_value: 0 ; max_value: 255 ; step: 1 ; restore_value: true
   - platform: template
-    name: "Mask o2"
-    id: nm2
-    min_value: 0
-    max_value: 255
-    step: 1
-    restore_value: true
+    name: "Mask o2"  ; id: nm2 ; min_value: 0 ; max_value: 255 ; step: 1 ; restore_value: true
   - platform: template
-    name: "Mask o3"
-    id: nm3
-    min_value: 0
-    max_value: 255
-    step: 1
-    restore_value: true
+    name: "Mask o3"  ; id: nm3 ; min_value: 0 ; max_value: 255 ; step: 1 ; restore_value: true
   - platform: template
-    name: "Mask o4"
-    id: nm4
-    min_value: 0
-    max_value: 255
-    step: 1
-    restore_value: true
+    name: "Mask o4"  ; id: nm4 ; min_value: 0 ; max_value: 255 ; step: 1 ; restore_value: true
 
   # Gateway
   - platform: template
-    name: "GW o1"
-    id: gw1
-    min_value: 0
-    max_value: 255
-    step: 1
-    restore_value: true
+    name: "GW o1"    ; id: gw1 ; min_value: 0 ; max_value: 255 ; step: 1 ; restore_value: true
   - platform: template
-    name: "GW o2"
-    id: gw2
-    min_value: 0
-    max_value: 255
-    step: 1
-    restore_value: true
+    name: "GW o2"    ; id: gw2 ; min_value: 0 ; max_value: 255 ; step: 1 ; restore_value: true
   - platform: template
-    name: "GW o3"
-    id: gw3
-    min_value: 0
-    max_value: 255
-    step: 1
-    restore_value: true
+    name: "GW o3"    ; id: gw3 ; min_value: 0 ; max_value: 255 ; step: 1 ; restore_value: true
   - platform: template
-    name: "GW o4"
-    id: gw4
-    min_value: 0
-    max_value: 255
-    step: 1
-    restore_value: true
+    name: "GW o4"    ; id: gw4 ; min_value: 0 ; max_value: 255 ; step: 1 ; restore_value: true
 
   # DNS1
   - platform: template
-    name: "DNS1 o1"
-    id: dns1_1
-    min_value: 0
-    max_value: 255
-    step: 1
-    restore_value: true
+    name: "DNS1 o1"  ; id: dns1_1 ; min_value: 0 ; max_value: 255 ; step: 1 ; restore_value: true
   - platform: template
-    name: "DNS1 o2"
-    id: dns1_2
-    min_value: 0
-    max_value: 255
-    step: 1
-    restore_value: true
+    name: "DNS1 o2"  ; id: dns1_2 ; min_value: 0 ; max_value: 255 ; step: 1 ; restore_value: true
   - platform: template
-    name: "DNS1 o3"
-    id: dns1_3
-    min_value: 0
-    max_value: 255
-    step: 1
-    restore_value: true
+    name: "DNS1 o3"  ; id: dns1_3 ; min_value: 0 ; max_value: 255 ; step: 1 ; restore_value: true
   - platform: template
-    name: "DNS1 o4"
-    id: dns1_4
-    min_value: 0
-    max_value: 255
-    step: 1
-    restore_value: true
+    name: "DNS1 o4"  ; id: dns1_4 ; min_value: 0 ; max_value: 255 ; step: 1 ; restore_value: true
 
   # DNS2 (opcional)
   - platform: template
-    name: "DNS2 o1"
-    id: dns2_1
-    min_value: 0
-    max_value: 255
-    step: 1
-    restore_value: true
+    name: "DNS2 o1"  ; id: dns2_1 ; min_value: 0 ; max_value: 255 ; step: 1 ; restore_value: true
   - platform: template
-    name: "DNS2 o2"
-    id: dns2_2
-    min_value: 0
-    max_value: 255
-    step: 1
-    restore_value: true
+    name: "DNS2 o2"  ; id: dns2_2 ; min_value: 0 ; max_value: 255 ; step: 1 ; restore_value: true
   - platform: template
-    name: "DNS2 o3"
-    id: dns2_3
-    min_value: 0
-    max_value: 255
-    step: 1
-    restore_value: true
+    name: "DNS2 o3"  ; id: dns2_3 ; min_value: 0 ; max_value: 255 ; step: 1 ; restore_value: true
   - platform: template
-    name: "DNS2 o4"
-    id: dns2_4
-    min_value: 0
-    max_value: 255
-    step: 1
-    restore_value: true
+    name: "DNS2 o4"  ; id: dns2_4 ; min_value: 0 ; max_value: 255 ; step: 1 ; restore_value: true
 
 button:
   - platform: template
@@ -237,11 +134,8 @@ button:
     id: save_and_reboot
     on_press:
       - lambda: |-
-          // No cal fer res aquí: els valors ja s'han guardat a flash (restore_value).
-          // Simplement reiniciem; a l'on_boot s'aplicarà ETH.config(...) amb els valors guardats.
           ESP.restart();
 
-# (Opcional) sensors d'informació útil
 text_sensor:
   - platform: version
     name: "Versió de Firmware"
@@ -250,5 +144,3 @@ sensor:
   - platform: ethernet_info
     ip_address:
       name: "IP Ethernet"
-
-# Nota: no definim 'wifi:' per la restricció d'ESPHome; l'AP s'arrenca via API Arduino (WiFi.softAP).

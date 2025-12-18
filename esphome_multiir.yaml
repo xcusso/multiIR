@@ -1,51 +1,12 @@
 # Versió RC00
 esphome:
-  name: multiIR
-  platform: ESP32
+  name: multi-ir
+  friendly_name: Multi_ir
+
+esp32:
   board: esp32dev
-
-  # APLICACIÓ DINÀMICA d'IP ESTÀTICA a ETH i (opcional) STA Wi‑Fi a l'arrencada
-  # ip: Ip ethernet
-  # gw: Gateway ethernet
-  # sn: subnet Mascara red ethernet
-  # dns: servidor dns ethernet
-  on_boot:
-    priority: 600
-    then:
-      - lambda: |-
-          // ----- Ethernet: IP estàtica si hi ha valors guardats -----
-          if (id(new_ip).length() > 0 && id(new_gateway).length() > 0 && id(new_subnet).length() > 0) {
-            IPAddress ip, gw, sn, dns;
-            bool ok_ip = ip.fromString(id(new_ip).c_str());
-            bool ok_gw = gw.fromString(id(new_gateway).c_str());
-            bool ok_sn = sn.fromString(id(new_subnet).c_str());
-            bool ok_dns = id(new_dns).length() ? dns.fromString(id(new_dns).c_str()) : false;
-
-            if (ok_ip && ok_gw && ok_sn) {
-              if (ok_dns) {
-                ETH.config(ip, gw, sn, dns);
-                ESP_LOGI("net", "ETH.config(IP=%s, GW=%s, SN=%s, DNS=%s) aplicat",
-                         id(new_ip).c_str(), id(new_gateway).c_str(),
-                         id(new_subnet).c_str(), id(new_dns).c_str());
-              } else {
-                ETH.config(ip, gw, sn);
-                ESP_LOGI("net", "ETH.config(IP=%s, GW=%s, SN=%s) aplicat",
-                         id(new_ip).c_str(), id(new_gateway).c_str(),
-                         id(new_subnet).c_str());
-              }
-            } else {
-              ESP_LOGW("net", "Formats IP/GW/SN invàlids. Deixem DHCP.");
-            }
-          } else {
-            ESP_LOGI("net", "DHCP (cap IP/gateway/subnet guardat)");
-          }
-
-          // ----- Wi‑Fi STA opcional com a backup si s'ha configurat -----
-          if (id(new_ssid).length() > 0) {
-            WiFi.mode(WIFI_STA);
-            WiFi.begin(id(new_ssid).c_str(), id(new_password).c_str());
-            ESP_LOGI("wifi", "Intentant STA amb SSID=%s", id(new_ssid).c_str());
-          }
+  framework:
+    type: esp-idf
 
 logger:
 
@@ -57,33 +18,7 @@ ota:
   - platform: esphome
     password: !secret ota_password
     
-# ---------- Globals persistents per config de xarxa ----------
 globals:
-  - id: new_ssid
-    type: std::string
-    restore_value: yes
-    initial_value: ""
-  - id: new_password
-    type: std::string
-    restore_value: yes
-    initial_value: ""
-  - id: new_ip
-    type: std::string
-    restore_value: yes
-    initial_value: ""
-  - id: new_gateway
-    type: std::string
-    restore_value: yes
-    initial_value: ""
-  - id: new_subnet
-    type: std::string
-    restore_value: yes
-    initial_value: ""
-  - id: new_dns
-    type: std::string
-    restore_value: yes
-    initial_value: ""
-
 # Globals de selecció
   - id: selected_tv
     type: int
@@ -139,91 +74,8 @@ captive_portal:
 # ---------- Pàgina web de configuració (IP, GW, SN, DNS, SSID/PASS) ----------
 web_server:
   port: 80
-  include_internal: true
-  on_request:
-    - lambda: |-
-        if (request->url() == "/" || request->url() == "/index") {
-          std::string html = R"HTML(
-            <html><head><title>multiIR Config</title>
-            <style>body{font-family:Arial;margin:24px}input{padding:6px;margin:6px 0;width:280px}.btn{padding:8px 14px;background:#0069d9;color:#fff;border:none;cursor:pointer}.btn-red{background:#c9302c}</style>
-            </head><body>
-            <h1>Configuració de Xarxa (WT32-ETH01)</h1>
-            <p>Ethernet: DHCP per defecte. Si introdueixes IP/Gateway/Subnet/DNS, s'aplicarà estàtica en el proper reinici.</p>
-            <h2>Estat guardat</h2>
-            <ul>
-              <li>IP: )HTML";
-          html += id(new_ip).length() ? id(new_ip) : std::string("(DHCP)");
-          html += R"HTML(</li><li>Gateway: )HTML";
-          html += id(new_gateway).length() ? id(new_gateway) : std::string("(no)");
-          html += R"HTML(</li><li>Subnet: )HTML";
-          html += id(new_subnet).length() ? id(new_subnet) : std::string("(no)");
-          html += R"HTML(</li><li>DNS: )HTML";
-          html += id(new_dns).length() ? id(new_dns) : std::string("(no)");
-          html += R"HTML(</li></ul>
-            <h2>Formulari</h2>
-            /config
-              <h3>Ethernet (opcional: IP estàtica)</h3>
-              IP: <input type="text" name="ip" placeholder="192.168.1.50"><br>
-              Gateway: <input type="text" name="gw" placeholder="192.168.1.1"><br>
-              Subnet: <input type="text" name="sn" placeholder="255.255.255.0"><br>
-              DNS: <input type="text" name="dns" placeholder="8.8.8.8"><br>
-              <h3>Wi‑Fi STA (opcional)</h3>
-              SSID: <input type="text" name="ssid" placeholder="NomWiFi"><br>
-              Password: <input type="text" name="pass" placeholder="Contrasenya"><br>
-              <input class="btn" type="submit" value="Guardar i reiniciar">
-            </form>
-            <hr>
-            /dhcp
-              <input class="btn btn-red" type="submit" value="Tornar a DHCP (neteja IP)">
-            </form>
-            </body></html>
-          )HTML";
-          request->send(200, "text/html", html);
-          return;
-        }
-
-        if (request->url() == "/config") {
-          if (request->has_param("ip"))   id(new_ip) = request->get_param("ip").c_str();
-          if (request->has_param("gw"))   id(new_gateway) = request->get_param("gw").c_str();
-          if (request->has_param("sn"))   id(new_subnet) = request->get_param("sn").c_str();
-          if (request->has_param("dns"))  id(new_dns) = request->get_param("dns").c_str();
-          if (request->has_param("ssid")) id(new_ssid) = request->get_param("ssid").c_str();
-          if (request->has_param("pass")) id(new_password) = request->get_param("pass").c_str();
-
-          request->send(200, "text/html", "<h1>Configuració guardada. Reiniciant...</h1>");
-          ESP_LOGI("net", "Guardat: IP=%s, GW=%s, SN=%s, DNS=%s, SSID=%s",
-                   id(new_ip).c_str(), id(new_gateway).c_str(),
-                   id(new_subnet).c_str(), id(new_dns).c_str(),
-                   id(new_ssid).c_str());
-          delay(1500);
-          ESP.restart();
-          return;
-        }
-
-        if (request->url() == "/dhcp") {
-          id(new_ip) = ""; id(new_gateway) = ""; id(new_subnet) = ""; id(new_dns) = "";
-          request->send(200, "text/html", "<h1>S'ha establert DHCP. Reiniciant...</h1>");
-          ESP_LOGI("net", "DHCP activat (valors netejats)");
-          delay(1200);
-          ESP.restart();
-          return;
-        }
-
-        request->send(404, "text/plain", "Not Found");
-
-# ---------- Sensors d'estat d'IP actual ----------
+  
 text_sensor:
-  - platform: template
-    name: "IP Ethernet actual"
-    update_interval: 5s
-    lambda: |-
-      return ETH.localIP().toString().c_str();
-  - platform: template
-    name: "IP Wi‑Fi actual"
-    update_interval: 5s
-    lambda: |-
-      return WiFi.localIP().toString().c_str();
-
 ### Retorna els protocols de cada TV
   - platform: template
     name: "TV1 protocol"
